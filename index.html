@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A minimal walkthrough for styling stock Pele diagrams with a white theme, drop shadows, CSS animations, and Lucide icons.">
+  <title>Pele, styled without touching core</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231a1a1a'/%3E%3Cpath d='M9 24V8h8a6 6 0 0 1 0 12h-8' fill='none' stroke='%23e8f0ee' stroke-width='3'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Primitive → semantic → component tokens. */
+      --p-mint: oklch(0.94 0.025 165);
+      --p-paper: oklch(0.99 0.006 165);
+      --p-ink: oklch(0.22 0.015 165);
+      --p-muted: oklch(0.43 0.025 165);
+      --p-line: oklch(0.82 0.035 165);
+      --p-accent: oklch(0.46 0.09 165);
+      --surface: var(--p-mint);
+      --surface-raised: var(--p-paper);
+      --text: var(--p-ink);
+      --text-muted: var(--p-muted);
+      --border: var(--p-line);
+      --accent: var(--p-accent);
+      --content: 880px;
+      --reading: 70ch;
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      background: var(--surface);
+      color: var(--text);
+      font-family: "Rethink Sans", sans-serif;
+      font-size: 16px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    button { font: inherit; }
+    a { color: inherit; text-underline-offset: 3px; }
+    a:hover { text-decoration-thickness: 2px; }
+    :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    .wrap { width: min(100% - 32px, var(--content)); margin-inline: auto; }
+    .reading { max-width: var(--reading); }
+
+    .site-header { padding-block: 24px; border-bottom: 1px solid var(--border); }
+    .site-header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .brand { font-weight: 700; text-decoration: none; letter-spacing: -0.02em; }
+    .brand span { color: var(--text-muted); font-weight: 500; }
+    nav { display: flex; gap: 20px; flex-wrap: wrap; }
+    nav a { font-size: 14px; font-weight: 600; text-decoration: none; }
+    nav a:hover { text-decoration: underline; }
+
+    .hero { padding-block: 72px 64px; }
+    .hero h1 {
+      max-width: 760px;
+      margin: 0 0 24px;
+      font-size: clamp(40px, 7vw, 72px);
+      line-height: 1.02;
+      letter-spacing: -0.055em;
+      font-weight: 600;
+    }
+    .hero p { margin: 0; font-size: 19px; max-width: 62ch; }
+    .hero code { font-size: 0.9em; }
+    .meta {
+      display: flex;
+      gap: 8px 24px;
+      flex-wrap: wrap;
+      margin-top: 32px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    main { padding-bottom: 80px; }
+    .tutorial { border-top: 1px solid var(--border); }
+    .step {
+      display: grid;
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+      gap: 40px;
+      padding-block: 48px;
+      border-bottom: 1px solid var(--border);
+      scroll-margin-top: 24px;
+    }
+    .step h2, .result-section h2 { margin: 0 0 12px; font-size: 28px; line-height: 1.15; letter-spacing: -0.03em; }
+    .step p { margin: 0 0 12px; }
+    .step p:last-child { margin-bottom: 0; }
+    .step code, .result-section code { font-family: ui-monospace, "SFMono-Regular", Consolas, monospace; }
+    .code {
+      margin: 0;
+      min-width: 0;
+      padding: 24px;
+      overflow: auto;
+      border-radius: var(--radius);
+      background: var(--text);
+      color: var(--surface-raised);
+      font: 13px/1.7 ui-monospace, "SFMono-Regular", Consolas, monospace;
+      tab-size: 2;
+    }
+    .note { color: var(--text-muted); font-size: 14px; }
+
+    .result-section { padding-top: 64px; scroll-margin-top: 24px; }
+    .result-section > p { margin: 0 0 24px; max-width: var(--reading); }
+    .demo {
+      margin-top: 24px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface-raised);
+    }
+    .demo-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 56px;
+      padding-inline: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .demo-label { font-size: 14px; font-weight: 600; }
+    [role="tablist"] { display: flex; gap: 4px; }
+    [role="tab"] {
+      min-height: 44px;
+      padding: 8px 12px;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background-color 160ms ease-out, color 160ms ease-out;
+    }
+    [role="tab"]:hover { background: var(--surface); color: var(--text); }
+    [role="tab"][aria-selected="true"] { background: var(--text); color: var(--surface-raised); }
+    .demo-panel { min-width: 0; }
+    .demo-panel[hidden] { display: none; }
+    .diagram-mount { min-height: 280px; padding: 32px 16px; display: grid; place-items: center; overflow: auto; background: #fff; }
+    .diagram-mount .pele { max-width: 100%; }
+    .source-panel { margin: 0; padding: 24px; min-height: 280px; overflow: auto; background: var(--text); color: var(--surface-raised); font: 14px/1.7 ui-monospace, "SFMono-Regular", Consolas, monospace; }
+
+    /* 1. White Pele theme. Every variable below is consumed by stock Pele,
+       except --pele-drop-shadow, which our own CSS consumes below. */
+    .pele-white {
+      --pele-bg: #ffffff;
+      --pele-fg: #1a1a1a;
+      --pele-muted: #52615a;
+      --pele-line: #1a1a1a;
+      --pele-surface: #ffffff;
+      --pele-surface-alt: #edf3f0;
+      --pele-border: #9aaca3;
+      --pele-accent: #176b4e;
+      --pele-font: "Rethink Sans", sans-serif;
+      --pele-radius: 8px;
+      --pele-drop-shadow: 3px 4px 5px rgb(0 0 0 / 22%);
+    }
+
+    /* 2. Shadows and 3. entrance animation: no Pele modifications. */
+    .pele-white .pele-node {
+      filter: drop-shadow(var(--pele-drop-shadow));
+      animation: pele-fade-in 420ms ease-out both;
+    }
+    .pele-white .pele-edge {
+      animation: pele-fade-in 420ms 100ms ease-out both;
+    }
+    @keyframes pele-fade-in {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    footer { padding-block: 32px; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 14px; }
+    footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+    @media (max-width: 720px) {
+      .hero { padding-block: 48px; }
+      .step { grid-template-columns: minmax(0, 1fr); gap: 24px; padding-block: 40px; }
+      .code { padding: 18px; font-size: 12px; }
+      .demo-bar { align-items: flex-start; flex-direction: column; padding-block: 12px; gap: 4px; }
+      .diagram-mount { min-height: 240px; padding-inline: 8px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header" id="top">
+    <div class="wrap">
+      <a class="brand" href="#top">Pele <span>/ styling starter</span></a>
+      <nav aria-label="Page sections">
+        <a href="#walkthrough">Walkthrough</a>
+        <a href="#styled-result">Styled result</a>
+        <a href="#default-result">Default comparison</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero" aria-labelledby="page-title">
+      <h1 id="page-title">Pele, styled without touching core.</h1>
+      <p>Add a white theme, drop shadows, entrance animations, and Lucide icons using Pele’s existing CSS hooks and <code>icons</code> option. No fork, plugin, build step, or modified Pele bundle.</p>
+      <div class="meta" aria-label="Project characteristics">
+        <span>Stock Pele 1.12.0</span>
+        <span>One HTML file</span>
+        <span>CSS + vanilla JavaScript</span>
+      </div>
+    </section>
+
+    <div class="tutorial" id="walkthrough">
+      <section class="step" aria-labelledby="setup-title">
+        <div>
+          <h2 id="setup-title">Start with stock Pele</h2>
+          <p>Load Pele’s browser build and give <code>mount()</code> a container. The pinned version makes the example reproducible.</p>
+          <p class="note">The examples below assume an element with <code>id="diagram"</code>.</p>
+        </div>
+        <pre class="code"><code>&lt;div id="diagram" class="pele-white"&gt;&lt;/div&gt;
+&lt;script src="https://cdn.jsdelivr.net/npm/pele@1.12.0/dist/pele.global.js"&gt;&lt;/script&gt;</code></pre>
+      </section>
+
+      <section class="step" aria-labelledby="theme-title">
+        <div>
+          <h2 id="theme-title">Set the white theme</h2>
+          <p>Set Pele’s documented variables on the container. They inherit into the generated SVG.</p>
+          <p class="note">Use your own class name so these choices do not affect every diagram on the page.</p>
+        </div>
+        <pre class="code"><code>.pele-white {
+  --pele-bg: #ffffff;
+  --pele-fg: #1a1a1a;
+  --pele-muted: #52615a;
+  --pele-line: #1a1a1a;
+  --pele-surface: #ffffff;
+  --pele-surface-alt: #edf3f0;
+  --pele-border: #9aaca3;
+  --pele-accent: #176b4e;
+  --pele-radius: 8px;
+}</code></pre>
+      </section>
+
+      <section class="step" aria-labelledby="shadows-title">
+        <div>
+          <h2 id="shadows-title">Add drop shadows</h2>
+          <p>Target Pele’s <code>.pele-node</code> class with SVG’s <code>drop-shadow()</code> filter.</p>
+          <p class="note"><code>--pele-drop-shadow</code> is our custom variable. Declaring it alone would do nothing; the <code>filter</code> rule consumes it.</p>
+        </div>
+        <pre class="code"><code>.pele-white {
+  --pele-drop-shadow: 3px 4px 5px rgb(0 0 0 / 22%);
+}
+
+.pele-white .pele-node {
+  filter: drop-shadow(var(--pele-drop-shadow));
+}</code></pre>
+      </section>
+
+      <section class="step" aria-labelledby="icons-title">
+        <div>
+          <h2 id="icons-title">Supply Lucide icons</h2>
+          <p>Pass trusted Lucide SVG shapes through Pele’s existing <code>icons</code> callback. Pele supplies the icon frame.</p>
+          <p class="note">The diagram labels below use names such as <code>fa:fa-check</code>. The callback maps those names to Lucide shapes; unknown names return nothing.</p>
+        </div>
+        <pre class="code"><code>const lucideIcons = {
+  check: '&lt;path d="M20 6 9 17l-5-5"/&gt;',
+  x: '&lt;path d="M18 6 6 18"/&gt;&lt;path d="m6 6 12 12"/&gt;',
+  zap: '&lt;path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/&gt;'
+};
+
+pele.mount(document.querySelector('#diagram'), source, {
+  icons: name =&gt; lucideIcons[name.replace(/^fa:fa-/, '')]
+});</code></pre>
+      </section>
+
+      <section class="step" aria-labelledby="animations-title">
+        <div>
+          <h2 id="animations-title">Animate with CSS</h2>
+          <p>A small opacity entrance works without changing Pele’s SVG layout. Always disable non-essential motion for readers who request reduced motion.</p>
+          <p class="note">Avoid animating CSS <code>transform</code> on positioned SVG groups unless you have checked that it does not override their placement.</p>
+        </div>
+        <pre class="code"><code>@keyframes pele-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.pele-white .pele-node {
+  animation: pele-fade-in 420ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pele-white .pele-node {
+    animation: none;
+  }
+}</code></pre>
+      </section>
+    </div>
+
+    <section class="result-section" id="styled-result" aria-labelledby="styled-title">
+      <h2 id="styled-title">The styled result</h2>
+      <p>This is the same stock Pele renderer with the white theme, shadows, entrance animation, and Lucide icons applied.</p>
+      <div class="demo">
+        <div class="demo-bar">
+          <span class="demo-label">Custom presentation</span>
+          <div role="tablist" aria-label="Styled example views" data-tabs>
+            <button type="button" role="tab" id="styled-render-tab" aria-selected="true" aria-controls="styled-render-panel">Rendered result</button>
+            <button type="button" role="tab" id="styled-source-tab" aria-selected="false" aria-controls="styled-source-panel" tabindex="-1">Mermaid source</button>
+          </div>
+        </div>
+        <div class="demo-panel" role="tabpanel" id="styled-render-panel" aria-labelledby="styled-render-tab">
+          <div id="styled-diagram" class="diagram-mount pele-white"></div>
+        </div>
+        <div class="demo-panel" role="tabpanel" id="styled-source-panel" aria-labelledby="styled-source-tab" hidden>
+          <pre class="source-panel"><code data-source></code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="result-section" id="default-result" aria-labelledby="default-title">
+      <h2 id="default-title">Original Pele, no custom styling</h2>
+      <p>For comparison, this uses the identical Mermaid source and icon resolver, but none of the custom theme, shadow, or animation CSS.</p>
+      <div class="demo">
+        <div class="demo-bar">
+          <span class="demo-label">Pele defaults</span>
+          <div role="tablist" aria-label="Default example views" data-tabs>
+            <button type="button" role="tab" id="default-render-tab" aria-selected="true" aria-controls="default-render-panel">Rendered result</button>
+            <button type="button" role="tab" id="default-source-tab" aria-selected="false" aria-controls="default-source-panel" tabindex="-1">Mermaid source</button>
+          </div>
+        </div>
+        <div class="demo-panel" role="tabpanel" id="default-render-panel" aria-labelledby="default-render-tab">
+          <div id="default-diagram" class="diagram-mount"></div>
+        </div>
+        <div class="demo-panel" role="tabpanel" id="default-source-panel" aria-labelledby="default-source-tab" hidden>
+          <pre class="source-panel"><code data-source></code></pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>Stock Pele; Lucide icon shapes (ISC License).</span>
+      <span><a href="https://pele.run/">Pele docs</a> · <a href="https://lucide.dev/">Lucide</a></span>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/pele@1.12.0/dist/pele.global.js"></script>
+  <script>
+    const source = `flowchart TD
+  A[fa:fa-file-text Mermaid] --> B{Style it?}
+  B -->|fa:fa-check Yes| C[fa:fa-zap Stock Pele]
+  B -->|fa:fa-x No| D[fa:fa-book Defaults]`;
+
+    // Lucide v1.65.0 shapes on Pele's 24 × 24 icon frame.
+    // ISC License, Lucide Icons and Contributors. Only trusted, fixed markup belongs here.
+    const lucideIcons = Object.freeze({
+      'file-text': '<path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>',
+      check: '<path d="M20 6 9 17l-5-5"/>',
+      x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+      zap: '<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>',
+      book: '<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/>'
+    });
+
+    const icons = (name) => lucideIcons[name.replace(/^fa:fa-/, '')];
+
+    document.querySelectorAll('[data-source]').forEach((element) => {
+      element.textContent = source;
+    });
+
+    if (window.pele) {
+      pele.mount(document.querySelector('#styled-diagram'), source, { icons });
+      pele.mount(document.querySelector('#default-diagram'), source, { icons });
+    } else {
+      document.querySelectorAll('.diagram-mount').forEach((element) => {
+        element.textContent = 'Pele could not be loaded. Check your connection and reload the page.';
+      });
+    }
+
+    document.querySelectorAll('[data-tabs]').forEach((tablist) => {
+      const tabs = Array.from(tablist.querySelectorAll('[role="tab"]'));
+      const demo = tablist.closest('.demo');
+
+      function activate(nextTab, moveFocus = false) {
+        tabs.forEach((tab) => {
+          const selected = tab === nextTab;
+          tab.setAttribute('aria-selected', String(selected));
+          tab.tabIndex = selected ? 0 : -1;
+          document.getElementById(tab.getAttribute('aria-controls')).hidden = !selected;
+        });
+        if (moveFocus) nextTab.focus();
+      }
+
+      tabs.forEach((tab, index) => {
+        tab.addEventListener('click', () => activate(tab));
+        tab.addEventListener('keydown', (event) => {
+          let nextIndex;
+          if (event.key === 'ArrowRight') nextIndex = (index + 1) % tabs.length;
+          if (event.key === 'ArrowLeft') nextIndex = (index - 1 + tabs.length) % tabs.length;
+          if (event.key === 'Home') nextIndex = 0;
+          if (event.key === 'End') nextIndex = tabs.length - 1;
+          if (nextIndex !== undefined) {
+            event.preventDefault();
+            activate(tabs[nextIndex], true);
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
