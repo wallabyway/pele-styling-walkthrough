@@ -2,6 +2,8 @@
 
 A minimal, working example of styling **stock [Pele](https://github.com/obsidianmd/pele)** without forking it, changing its core, or adding a plugin system.
 
+**[Open the GitHub Pages walkthrough](https://wallabyway.github.io/pele-styling-walkthrough/)**
+
 The included GitHub Pages demo covers:
 
 - A white Pele theme using documented CSS variables
