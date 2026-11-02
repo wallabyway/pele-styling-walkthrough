@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="A minimal walkthrough for styling stock Pele diagrams with a paper-white theme, elevated shadows, intro and loop CSS motion, and Lucide icons.">
+  <meta name="description" content="A minimal walkthrough for styling stock Pele diagrams with a white theme, elevated shadows, intro and loop CSS motion, and Lucide icons.">
   <title>Pele, styled without touching core</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231a1a1a'/%3E%3Cpath d='M9 24V8h8a6 6 0 0 1 0 12h-8' fill='none' stroke='%23e8f0ee' stroke-width='3'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -143,7 +143,7 @@
     .diagram-mount .pele { max-width: 100%; }
     .source-panel { margin: 0; padding: 24px; min-height: 280px; overflow: auto; background: var(--text); color: var(--surface-raised); font: 14px/1.7 ui-monospace, "SFMono-Regular", Consolas, monospace; }
 
-    /* 1. Paper-white Pele theme. Every --pele-* variable is consumed by stock Pele. */
+    /* 1. White Pele theme. Every --pele-* variable is consumed by stock Pele. */
     .pele-white {
       --pele-bg: #ffffff;
       --pele-fg: #1d1c1a;
@@ -158,11 +158,10 @@
     }
     /* Let long shadows spill past the drawing's edge instead of being cut off. */
     .pele-white svg.pele { overflow: visible; }
-    /* Cards and cluster sheets take the paper pattern; the plain color is the fallback. */
-    .pele-white .pele-node > [fill="var(--_s)"] { fill: url(#pele-paper) var(--pele-surface); }
+    /* Cards keep Pele's own surface fill; borders go soft. */
     .pele-white .pele-node > [stroke="var(--_b)"] { stroke: rgb(29 28 26 / 14%); stroke-width: 1px; }
-    .pele-white .pele-cluster > rect { fill: url(#pele-paper-alt) var(--pele-surface-alt); fill-opacity: 1; stroke: rgb(29 28 26 / 12%); }
-    .pele-white .pele-edge-label > rect { fill: url(#pele-paper) var(--pele-surface); stroke: rgb(29 28 26 / 16%); }
+    .pele-white .pele-cluster > rect { fill-opacity: 1; stroke: rgb(29 28 26 / 12%); }
+    .pele-white .pele-edge-label > rect { stroke: rgb(29 28 26 / 16%); }
 
     /* 2. Elevated shadows: stacked SVG filters from the hidden <svg class="pele-defs">.
        Safari ignores CSS drop-shadow() on shapes inside an SVG; filter:url() works everywhere. */
@@ -292,14 +291,10 @@
   </style>
 </head>
 <body>
-  <!-- Paper and shadows for .pele-paper diagrams. CSS can point any inline SVG on the page at these
+  <!-- Shadow filters for .pele-white diagrams. CSS can point any inline SVG on the page at these
        by id. Hidden with zero size, not display:none, which would switch the filters off. -->
   <svg class="pele-defs" width="0" height="0" aria-hidden="true" focusable="false">
     <defs>
-      <filter id="pele-grain" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="3" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 .33 0 0 0 0 .29 0 0 0 0 .22 0 0 0 .075 0"/></filter>
-      <filter id="pele-mottle" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency=".022" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 .55 0 0 0 0 .5 0 0 0 0 .42 0 0 0 .035 0"/></filter>
-      <pattern id="pele-paper" patternUnits="userSpaceOnUse" width="200" height="200"><rect width="200" height="200" fill="#fefdfa"/><rect width="200" height="200" filter="url(#pele-mottle)"/><rect width="200" height="200" filter="url(#pele-grain)"/></pattern>
-      <pattern id="pele-paper-alt" patternUnits="userSpaceOnUse" width="200" height="200"><rect width="200" height="200" fill="#f8f6f0"/><rect width="200" height="200" filter="url(#pele-mottle)"/><rect width="200" height="200" filter="url(#pele-grain)"/></pattern>
       <!-- Stacked shadows, each [y offset, blur, opacity]: contact, short and long. -->
       <filter id="pele-lift" x="-60%" y="-60%" width="220%" height="280%" color-interpolation-filters="sRGB">
           <feGaussianBlur in="SourceAlpha" stdDeviation="0.75"/><feOffset dy="1" result="o0"/><feFlood flood-color="#1d1c1a" flood-opacity="0.34"/><feComposite in2="o0" operator="in" result="s0"/>
@@ -353,7 +348,7 @@
   <main class="wrap">
     <section class="hero" aria-labelledby="page-title">
       <h1 id="page-title">Pele, styled without touching core.</h1>
-      <p>Add a paper-white theme, elevated shadows, intro-and-loop motion, and Lucide icons using Pele’s existing CSS hooks and <code>icons</code> option. No fork, plugin, build step, or modified Pele bundle.</p>
+      <p>Add a white theme, elevated shadows, intro-and-loop motion, and Lucide icons using Pele’s existing CSS hooks and <code>icons</code> option. No fork, plugin, build step, or modified Pele bundle.</p>
       <div class="meta" aria-label="Project characteristics">
         <span>Stock Pele 1.12.0</span>
         <span>One HTML file</span>
@@ -374,10 +369,9 @@
 
       <section class="step" aria-labelledby="theme-title">
         <div>
-          <h2 id="theme-title">Set a paper-white theme</h2>
+          <h2 id="theme-title">Set a white theme</h2>
           <p>Set Pele’s documented variables on the container. They inherit into the generated SVG.</p>
-          <p>For paper, add one hidden <code>&lt;svg&gt;</code> to the page holding a grain pattern. Any shape Pele fills with its surface color can then use <code>url(#pele-paper)</code>, and the plain color is the fallback.</p>
-          <p class="note">Use your own class name so these choices do not affect every diagram on the page. Hide the defs with zero size, not <code>display: none</code>, which turns off its filters and patterns.</p>
+          <p class="note">Use your own class name so these choices do not affect every diagram on the page.</p>
         </div>
         <pre class="code"><code>.pele-white {
   --pele-bg: #ffffff;
@@ -388,19 +382,14 @@
   --pele-border: #ddd8cc;
   --pele-accent: #2f63ad;
   --pele-radius: 8px;
-}
-
-/* Paper grain, from &lt;pattern id="pele-paper"&gt; */
-.pele-white .pele-node &gt; [fill="var(--_s)"] {
-  fill: url(#pele-paper) var(--pele-surface);
 }</code></pre>
       </section>
 
       <section class="step" aria-labelledby="shadows-title">
         <div>
           <h2 id="shadows-title">Add elevated shadows</h2>
-          <p>Stack three shadows (contact, short, long) in an SVG <code>&lt;filter&gt;</code> in the same hidden defs, then point Pele’s classes at it. Cards lift higher on hover; clusters and edge labels get lighter filters of their own.</p>
-          <p class="note">Why not CSS <code>drop-shadow()</code>? Safari does not draw it on shapes inside an SVG. <code>filter: url(#…)</code> works in every browser.</p>
+          <p>Stack three shadows (contact, short, long) in an SVG <code>&lt;filter&gt;</code> inside one hidden <code>&lt;svg&gt;</code> on the page, then point Pele’s classes at it. Cards lift higher on hover; clusters and edge labels get lighter filters of their own.</p>
+          <p class="note">Why not CSS <code>drop-shadow()</code>? Safari does not draw it on shapes inside an SVG. <code>filter: url(#…)</code> works in every browser. Hide that <code>&lt;svg&gt;</code> with zero size, not <code>display: none</code>, which turns its filters off.</p>
         </div>
         <pre class="code"><code>&lt;filter id="pele-lift" x="-60%" y="-60%"
         width="220%" height="280%"&gt;
@@ -475,7 +464,7 @@ pele.mount(document.querySelector('#diagram'), source, {
 
     <section class="result-section" id="styled-result" aria-labelledby="styled-title">
       <h2 id="styled-title">The styled result</h2>
-      <p>This is the same stock Pele renderer with the paper-white theme, elevated shadows, intro and loop motion, and Lucide icons applied. Hover a card to lift it.</p>
+      <p>This is the same stock Pele renderer with the white theme, elevated shadows, intro and loop motion, and Lucide icons applied. Hover a card to lift it.</p>
       <div class="demo">
         <div class="demo-bar">
           <span class="demo-label">Custom presentation</span>
@@ -504,14 +493,14 @@ pele.mount(document.querySelector('#diagram'), source, {
 
       <div class="gallery-intro" id="gallery">
         <h3>Every diagram type, same styling</h3>
-        <p>The same paper-white theme, elevated shadows, intro and loop motion, and Lucide icon resolver applied to flowcharts, ER diagrams, architecture, Gantt, sequence, state, class, pie, XY charts, timelines, mind maps, and git graphs. Examples adapted from the <a href="https://wallabyway.github.io/pele-looks-demo/">Pele looks gallery</a>, rendered here with stock Pele.</p>
+        <p>The same white theme, elevated shadows, intro and loop motion, and Lucide icon resolver applied to flowcharts, ER diagrams, architecture, Gantt, sequence, state, class, pie, XY charts, timelines, mind maps, and git graphs. Examples adapted from the <a href="https://wallabyway.github.io/pele-looks-demo/">Pele looks gallery</a>, rendered here with stock Pele.</p>
       </div>
       <div class="gallery" id="styled-gallery"></div>
     </section>
 
     <section class="result-section" id="default-result" aria-labelledby="default-title">
       <h2 id="default-title">Original Pele, no custom styling</h2>
-      <p>For comparison, this uses the identical Mermaid source and icon resolver, but none of the custom theme, paper, shadow, or motion CSS.</p>
+      <p>For comparison, this uses the identical Mermaid source and icon resolver, but none of the custom theme, shadow, or motion CSS.</p>
       <div class="demo">
         <div class="demo-bar">
           <span class="demo-label">Pele defaults</span>

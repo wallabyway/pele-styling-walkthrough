@@ -6,7 +6,7 @@ A minimal, working example of styling **stock [Pele](https://github.com/obsidian
 
 The included GitHub Pages demo covers:
 
-- A paper-white Pele theme: documented CSS variables plus a grain pattern on cards
+- A white Pele theme using documented CSS variables (plain colors)
 - Elevated, stacked shadows (contact, short, long) as SVG filters, lifting higher on hover
 - Intro + loop motion in CSS: cards rise in turn, lines wipe in, then lines flow as moving dashes, with reduced-motion support and a Motion / Replay control
 - Lucide icons supplied through Pele's existing `icons` option
@@ -51,7 +51,7 @@ pele.mount(document.querySelector('#diagram'), source);
 
 At this point the icon names are just text because no icon resolver has been supplied yet. The next sections add presentation without changing Pele.
 
-## 2. Apply a paper-white theme
+## 2. Apply a white theme
 
 Pele reads documented CSS variables inherited by its generated SVG. Scope the theme with your own class so it only affects the diagrams you choose:
 
@@ -70,19 +70,18 @@ Pele reads documented CSS variables inherited by its generated SVG. Scope the th
 }
 ```
 
-For the paper texture, the page carries **one hidden `<svg>`** with `<defs>`: two noise filters (`pele-grain`, `pele-mottle`) layered into a `<pattern id="pele-paper">`. CSS on the page can point any inline SVG at those ids, so shapes Pele fills with its surface color can use the pattern, with the plain color as fallback:
+Pele already fills cards with `--pele-surface` and clusters with `--pele-surface-alt`, so no extra fill rules are needed. Two small additions help the shadows in the next step:
 
 ```css
-.pele-white .pele-node > [fill="var(--_s)"] { fill: url(#pele-paper) var(--pele-surface); }
-.pele-white .pele-cluster > rect { fill: url(#pele-paper-alt) var(--pele-surface-alt); fill-opacity: 1; }
-.pele-white svg.pele { overflow: visible; } /* let long shadows spill past the edge */
+.pele-white .pele-cluster > rect { fill-opacity: 1; } /* solid, so its shadow doesn't show through */
+.pele-white svg.pele { overflow: visible; }           /* let long shadows spill past the edge */
 ```
 
-Hide the defs with zero size, not `display: none`, which disables its filters and patterns. See [Pele's theming documentation](https://pele.run/theming/) for the variables and SVG classes.
+See [Pele's theming documentation](https://pele.run/theming/) for the variables and SVG classes.
 
 ## 3. Add elevated shadows
 
-The same hidden defs hold stacked shadow filters. Each layer blurs the shape's alpha, offsets it, tints it, and all layers merge under the shape:
+The page carries **one hidden `<svg>`** whose `<defs>` hold stacked shadow filters; CSS can point any inline SVG on the page at them by id. Hide it with zero size, not `display: none`, which turns the filters off. Each layer blurs the shape's alpha, offsets it, tints it, and all layers merge under the shape:
 
 | Filter | Layers `[dy, blur, opacity]` | Used on |
 | --- | --- | --- |
@@ -171,10 +170,10 @@ All motion sits inside `prefers-reduced-motion: no-preference`.
 
 The bottom of `index.html` renders the same Mermaid source twice:
 
-1. **Styled result:** the paper-white theme, elevated shadows, intro + loop motion, and Lucide resolver.
+1. **Styled result:** the white theme, elevated shadows, intro + loop motion, and Lucide resolver.
 2. **Original Pele:** default Pele presentation, with only the same icon resolver so the comparison remains readable.
 
-Below the styled result, a **gallery** renders 14 more diagrams covering every major Mermaid type with the same paper-white theme, elevated shadows, intro + loop motion, and Lucide resolver. The resolver there also accepts `fa:users`, mind map `fa fa-database`, and architecture names such as `internet` and `disk`, mapping them onto Lucide shapes. Each card has a collapsible **Mermaid source**.
+Below the styled result, a **gallery** renders 14 more diagrams covering every major Mermaid type with the same white theme, elevated shadows, intro + loop motion, and Lucide resolver. The resolver there also accepts `fa:users`, mind map `fa fa-database`, and architecture names such as `internet` and `disk`, mapping them onto Lucide shapes. Each card has a collapsible **Mermaid source**.
 
 Both examples have **Rendered result** and **Mermaid source** tabs. The tabs use vanilla JavaScript and support click, arrow keys, Home, and End.
 
