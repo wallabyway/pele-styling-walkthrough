@@ -11,6 +11,7 @@ The included GitHub Pages demo covers:
 - A small CSS entrance animation with reduced-motion support
 - Lucide icons supplied through Pele's existing `icons` option
 - Rendered/source tabs for both the styled example and an unstyled Pele comparison
+- A gallery of 14 diagrams (flowchart, ER, architecture, Gantt, sequence, state, class, pie, XY chart, timeline, mind map, git graph) with the same styling, adapted from the [Pele looks gallery](https://wallabyway.github.io/pele-looks-demo/)
 
 There is no build step. The entire demo lives in [`index.html`](index.html).
 
@@ -151,6 +152,8 @@ The bottom of `index.html` renders the same Mermaid source twice:
 
 1. **Styled result:** the white theme, shadows, animations, and Lucide resolver.
 2. **Original Pele:** default Pele presentation, with only the same icon resolver so the comparison remains readable.
+
+Below the styled result, a **gallery** renders 14 more diagrams covering every major Mermaid type with the same white theme, shadows, animation, and Lucide resolver. The resolver there also accepts `fa:users`, mind map `fa fa-database`, and architecture names such as `internet` and `disk`, mapping them onto Lucide shapes. Each card has a collapsible **Mermaid source**.
 
 Both examples have **Rendered result** and **Mermaid source** tabs. The tabs use vanilla JavaScript and support click, arrow keys, Home, and End.
 
