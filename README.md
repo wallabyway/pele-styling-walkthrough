@@ -89,8 +89,8 @@ The same hidden defs hold stacked shadow filters. Each layer blurs the shape's a
 | `pele-lift` | `[1,1.5,.34] [6,8,.22] [20,26,.26]` | nodes, slices |
 | `pele-lift-hover` | `[1,1.5,.34] [10,12,.24] [30,38,.3]` | hovered nodes |
 | `pele-sheet` | `[1,1,.22] [8,16,.16]` | clusters |
-| `pele-tag` | `[.5,.5,.3] [1.5,1.5,.2]` | edge labels, git commits |
-| `pele-bar` | `[.5,.5,.3] [2,2.5,.2]` | Gantt bars (short and close, so long bars don't smear) |
+| `pele-tag` | `[.5,.5,.32] [2,2.5,.24] [5,7,.12]` | edge labels, git commits |
+| `pele-bar` | `[.5,.5,.32] [3,3.5,.24] [8,10,.12]` | Gantt bars (short and close, so long bars don't smear) |
 
 ```css
 .pele-white :is(.pele-node, .pele-task, .pele-slice, .pele-commit) { filter: url(#pele-lift); }
